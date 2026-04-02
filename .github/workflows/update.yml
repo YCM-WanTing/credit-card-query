@@ -37,4 +37,4 @@ jobs:
           git add card_data.json docs/index.html
           # 若沒有任何異動就不 commit，避免空 commit
           git diff --staged --quiet && echo "沒有資料變更，跳過 commit" || \
-            (git commit -m "chore: auto-update card data $(date +%Y-%m-%d)" && git push)
+            (git commit -m "chore: auto-update card data $(date +%Y-%m-%d)" && git pull --rebase && git push)
