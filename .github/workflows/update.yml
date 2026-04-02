@@ -1,9 +1,9 @@
-name: 每週自動更新優惠資料
+name: 每月自動更新優惠資料
 
 on:
   schedule:
-    # 每週一 台灣時間 02:00（UTC 週日 18:00）
-    - cron: '0 18 * * 0'
+    # 每月1日 台灣時間 02:00（UTC 00:18）
+    - cron: '0 18 1 * *'
   workflow_dispatch:
     # 允許在 GitHub 網頁手動觸發
 
@@ -24,7 +24,8 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        # --omit=optional 跳過 puppeteer（含 Chromium），大幅縮短安裝時間
+        run: npm ci --omit=optional
 
       - name: 執行爬蟲並重建靜態頁面
         run: node update.js
