@@ -1,0 +1,39 @@
+name: 每週自動更新優惠資料
+
+on:
+  schedule:
+    # 每週一 台灣時間 02:00（UTC 週日 18:00）
+    - cron: '0 18 * * 0'
+  workflow_dispatch:
+    # 允許在 GitHub 網頁手動觸發
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # 需要寫入權限才能 push
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: 執行爬蟲並重建靜態頁面
+        run: node update.js
+
+      - name: Commit & Push（若有變更）
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add card_data.json docs/index.html
+          # 若沒有任何異動就不 commit，避免空 commit
+          git diff --staged --quiet && echo "沒有資料變更，跳過 commit" || \
+            (git commit -m "chore: auto-update card data $(date +%Y-%m-%d)" && git push)
