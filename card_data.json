@@ -1,0 +1,561 @@
+{
+  "lastUpdated": "2026-04-02T10:00:00.000Z",
+  "cards": [
+    {
+      "id": "taishin_richart",
+      "name": "台新 Richart 卡",
+      "issuer": "台新銀行",
+      "color": "#e60026",
+      "sourceUrl": "https://richart.tw/TSDIB_RichartWeb/card/credit-card",
+      "annualFee": "首年免費，次年簽電子帳單免費",
+      "notes": "每日可於 Richart Life App 切換方案，需設定台新帳戶自動扣繳",
+      "rates": {
+        "general": {
+          "rate": 1.3,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "一般消費基本回饋"
+        },
+        "convenience": {
+          "rate": 3.3,
+          "unit": "%",
+          "cap": 300,
+          "capUnit": "points/月",
+          "note": "天天刷方案：超商、交通、藥妝"
+        },
+        "dining": {
+          "rate": 3.3,
+          "unit": "%",
+          "cap": 300,
+          "capUnit": "points/月",
+          "note": "好饗刷方案：餐廳、外送、娛樂"
+        },
+        "department": {
+          "rate": 3.3,
+          "unit": "%",
+          "cap": 300,
+          "capUnit": "points/月",
+          "note": "大筆刷方案：百貨、家具、3C"
+        },
+        "online": {
+          "rate": 3.3,
+          "unit": "%",
+          "cap": 300,
+          "capUnit": "points/月",
+          "note": "數趣刷方案：網購、串流"
+        },
+        "travel": {
+          "rate": 3.3,
+          "unit": "%",
+          "cap": 300,
+          "capUnit": "points/月",
+          "note": "玩旅刷方案：海外、航空、飯店"
+        },
+        "linepay": {
+          "rate": 2.3,
+          "unit": "%",
+          "cap": 300,
+          "capUnit": "points/月",
+          "note": "LINE Pay 消費加碼（新戶 Pay 著刷）"
+        },
+        "holiday": {
+          "rate": 2.0,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "假日刷方案：假日全類別"
+        },
+        "insurance": {
+          "rate": 1.3,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "保費消費"
+        },
+        "overseas": {
+          "rate": 3.3,
+          "unit": "%",
+          "cap": 300,
+          "capUnit": "points/月",
+          "note": "玩旅刷方案可涵蓋海外消費"
+        },
+        "fuel": {
+          "rate": 1.3,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "加油站一般消費"
+        },
+        "supermarket": {
+          "rate": 1.3,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "超市量販一般消費"
+        }
+      }
+    },
+    {
+      "id": "sinopac_daway",
+      "name": "永豐 DAWAY 卡",
+      "issuer": "永豐銀行",
+      "color": "#005bac",
+      "sourceUrl": "https://bank.sinopac.com/sinopacbt/personal/credit-card/introduction/bankcard/DAWAY.html",
+      "annualFee": "首年免費，次年簽電子帳單或無紙化帳單免費",
+      "notes": "需綁定 LINE Pay 且設定自動扣繳方可享 LINE Pay 加碼；新戶定義：未持有永豐信用卡或已滿 6 個月以上",
+      "rates": {
+        "general": {
+          "rate": 0.5,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "一般消費基本回饋（LINE POINTS）"
+        },
+        "linepay": {
+          "rate": 2.0,
+          "unit": "%",
+          "cap": 300,
+          "capUnit": "points/月",
+          "note": "LINE Pay 消費（base 0.5% + bonus 1.5%）"
+        },
+        "linepay_new": {
+          "rate": 6.0,
+          "unit": "%",
+          "cap": 300,
+          "capUnit": "points/月",
+          "note": "新戶 LINE Pay 加碼 +4%，前 6 個月有效（截至 2026/6/30）"
+        },
+        "overseas": {
+          "rate": 2.5,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "海外消費回饋"
+        },
+        "convenience": {
+          "rate": 0.5,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "超商一般消費"
+        },
+        "dining": {
+          "rate": 0.5,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "餐廳一般消費（若以 LINE Pay 結帳可享 2%）"
+        },
+        "online": {
+          "rate": 0.5,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "網購一般消費（若以 LINE Pay 結帳可享 2%）"
+        },
+        "insurance": {
+          "rate": 0.5,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "保費消費"
+        },
+        "supermarket": {
+          "rate": 0.5,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "超市量販一般消費"
+        },
+        "fuel": {
+          "rate": 0.5,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "加油站一般消費"
+        }
+      }
+    },
+    {
+      "id": "ubot_linepay",
+      "name": "聯邦 LINE PAY 卡（賴點卡）",
+      "issuer": "聯邦銀行",
+      "color": "#00b900",
+      "sourceUrl": "https://activity.ubot.com.tw/2026LaiDianCard/index.htm",
+      "annualFee": "首年免費，次年有條件免年費",
+      "notes": "海外 3% 無上限；偶數日指定通路加碼 5%（需單筆消費 NT$100 以上）；新戶前 6 個月額外 +4%",
+      "rates": {
+        "general": {
+          "rate": 1.0,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "國內一般消費 LINE POINTS"
+        },
+        "overseas": {
+          "rate": 3.0,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "海外消費無上限 LINE POINTS"
+        },
+        "linepay": {
+          "rate": 2.0,
+          "unit": "%",
+          "cap": 200,
+          "capUnit": "points/月",
+          "note": "國內 LINE Pay 加碼 +1%"
+        },
+        "dining": {
+          "rate": 1.0,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "餐廳一般消費（偶數日可達 6%）"
+        },
+        "dining_even": {
+          "rate": 6.0,
+          "unit": "%",
+          "cap": 150,
+          "capUnit": "points/月",
+          "note": "偶數日指定餐飲通路 +5%（舊戶），單筆 NT$100 以上"
+        },
+        "dining_even_new": {
+          "rate": 11.0,
+          "unit": "%",
+          "cap": 300,
+          "capUnit": "points/月",
+          "note": "新戶偶數日指定餐飲（1% + 5% + 4% + 1% = 11%），前 6 個月"
+        },
+        "general_new": {
+          "rate": 5.0,
+          "unit": "%",
+          "cap": 300,
+          "capUnit": "points/月",
+          "note": "新戶一般消費 +4% 加碼，前 6 個月"
+        },
+        "convenience": {
+          "rate": 1.0,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "超商一般消費"
+        },
+        "online": {
+          "rate": 1.0,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "網購一般消費"
+        },
+        "supermarket": {
+          "rate": 1.0,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "超市量販一般消費"
+        },
+        "insurance": {
+          "rate": 1.0,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "保費消費"
+        },
+        "fuel": {
+          "rate": 1.0,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "加油站一般消費"
+        }
+      }
+    },
+    {
+      "id": "fubon_j",
+      "name": "富邦 J卡",
+      "issuer": "台北富邦銀行",
+      "color": "#d4373d",
+      "sourceUrl": "https://www.fubon.com/banking/j02/",
+      "annualFee": "首年免費，次年有條件免年費（年消費 NT$60,000 或 12 筆以上、簽電子帳單、綁 LINE 官方帳號等）",
+      "notes": "主打日本旅遊消費；日本 IC 電子錢包加值最高 10%；泰國 5%、韓國 3%；國內一般 1 點/NT$",
+      "rates": {
+        "general": {
+          "rate": 1.0,
+          "unit": "LINE POINTS/NT$100",
+          "cap": null,
+          "capUnit": null,
+          "note": "國內一般消費 1 點/NT$100"
+        },
+        "overseas": {
+          "rate": 6.0,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "海外一般消費（單筆 NT$1,000 以上）"
+        },
+        "overseas_japan": {
+          "rate": 6.0,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "日本當地消費（實體刷卡）"
+        },
+        "japan_transit": {
+          "rate": 10.0,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "日本 IC 電子錢包加值（Suica/PASMO/ICOCA）"
+        },
+        "overseas_thailand": {
+          "rate": 5.0,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "泰國當地消費（單筆 NT$1,000 以上）"
+        },
+        "overseas_korea": {
+          "rate": 3.0,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "韓國當地消費（單筆 NT$1,000 以上）"
+        },
+        "travel": {
+          "rate": 6.0,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "海外旅遊消費"
+        },
+        "convenience": {
+          "rate": 1.0,
+          "unit": "LINE POINTS/NT$100",
+          "cap": null,
+          "capUnit": null,
+          "note": "超商國內消費"
+        },
+        "dining": {
+          "rate": 1.0,
+          "unit": "LINE POINTS/NT$100",
+          "cap": null,
+          "capUnit": null,
+          "note": "餐廳國內消費"
+        },
+        "online": {
+          "rate": 1.0,
+          "unit": "LINE POINTS/NT$100",
+          "cap": null,
+          "capUnit": null,
+          "note": "網購國內消費"
+        },
+        "supermarket": {
+          "rate": 1.0,
+          "unit": "LINE POINTS/NT$100",
+          "cap": null,
+          "capUnit": null,
+          "note": "超市量販國內消費"
+        },
+        "insurance": {
+          "rate": 1.0,
+          "unit": "LINE POINTS/NT$100",
+          "cap": null,
+          "capUnit": null,
+          "note": "保費消費"
+        },
+        "fuel": {
+          "rate": 1.0,
+          "unit": "LINE POINTS/NT$100",
+          "cap": null,
+          "capUnit": null,
+          "note": "加油站消費"
+        },
+        "department": {
+          "rate": 1.0,
+          "unit": "LINE POINTS/NT$100",
+          "cap": null,
+          "capUnit": null,
+          "note": "百貨購物國內消費"
+        }
+      }
+    },
+    {
+      "id": "hsbc_signature",
+      "name": "匯豐 現金御璽卡",
+      "issuer": "匯豐銀行（台灣）",
+      "color": "#db0011",
+      "sourceUrl": "https://www.hsbc.com.tw/credit-cards/products/cash-back/",
+      "annualFee": "首年免費，次年簽電子帳單或年消費 NT$80,000 或 12 筆以上免費",
+      "notes": "無回饋上限；忠誠加碼前 3 個月 +10% 最高 NT$200/月；可 1:2 換里程",
+      "rates": {
+        "general": {
+          "rate": 1.22,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "國內消費現金回饋，無上限"
+        },
+        "overseas": {
+          "rate": 2.22,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "海外消費現金回饋，無上限（歐盟實體店除外）"
+        },
+        "insurance": {
+          "rate": 1.22,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "保費消費現金回饋"
+        },
+        "loyal_bonus": {
+          "rate": 1.342,
+          "unit": "%",
+          "cap": 200,
+          "capUnit": "NT$/月",
+          "note": "忠誠加碼 +10%（相當於 1.342%），前 3 個月，每月上限 NT$200"
+        },
+        "convenience": {
+          "rate": 1.22,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "超商消費"
+        },
+        "dining": {
+          "rate": 1.22,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "餐廳消費"
+        },
+        "online": {
+          "rate": 1.22,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "網購消費"
+        },
+        "supermarket": {
+          "rate": 1.22,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "超市量販消費"
+        },
+        "fuel": {
+          "rate": 1.22,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "加油站消費"
+        },
+        "department": {
+          "rate": 1.22,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "百貨購物消費"
+        },
+        "travel": {
+          "rate": 2.22,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "旅遊相關海外消費"
+        }
+      }
+    },
+    {
+      "id": "yuanta_diamond",
+      "name": "元大 鑽金卡",
+      "issuer": "元大銀行",
+      "color": "#c8a951",
+      "sourceUrl": "https://www.yuantabank.com.tw/bank/creditCard/creditCard/in.do?id=275bac7b2e000004dddb",
+      "annualFee": "首年免費，次年簽電子帳單或設定元大帳戶自動扣繳免費",
+      "notes": "無回饋上限；月消費 NT$12,888 起享免費停車 1 小時及道路救援；海外旅平險最高 NT$2,000 萬",
+      "rates": {
+        "general": {
+          "rate": 1.2,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "國內消費鑽金回饋，無上限"
+        },
+        "overseas": {
+          "rate": 2.2,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "海外消費鑽金回饋，無上限"
+        },
+        "convenience": {
+          "rate": 1.2,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "超商消費"
+        },
+        "dining": {
+          "rate": 1.2,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "餐廳消費"
+        },
+        "online": {
+          "rate": 1.2,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "網購消費"
+        },
+        "supermarket": {
+          "rate": 1.2,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "超市量販消費"
+        },
+        "fuel": {
+          "rate": 1.2,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "加油站消費"
+        },
+        "department": {
+          "rate": 1.2,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "百貨購物消費"
+        },
+        "insurance": {
+          "rate": 1.2,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "保費消費"
+        },
+        "travel": {
+          "rate": 2.2,
+          "unit": "%",
+          "cap": null,
+          "capUnit": null,
+          "note": "旅遊相關海外消費"
+        },
+        "parking": {
+          "rate": 0,
+          "unit": "service",
+          "cap": null,
+          "capUnit": null,
+          "note": "月消費 NT$12,888 起享免費停車 1 小時（免費附加服務）"
+        }
+      }
+    }
+  ]
+}

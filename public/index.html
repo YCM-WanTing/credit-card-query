@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>信用卡優惠查詢系統</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f4f6f9;
+      --card-bg: #ffffff;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --shadow: 0 1px 4px rgba(0,0,0,.08);
+      --radius: 12px;
+      --gold: #f59e0b;
+      --silver: #94a3b8;
+      --bronze: #b45309;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Header ─────────────────────────────────────────── */
+    header {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+
+    header h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      flex: 1;
+    }
+
+    .last-updated {
+      font-size: .8rem;
+      color: var(--text-muted);
+    }
+
+    .btn {
+      padding: 7px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: .875rem;
+      font-weight: 600;
+      transition: background .15s;
+    }
+
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-outline { background: #fff; color: var(--primary); border: 1.5px solid var(--primary); }
+    .btn-outline:hover { background: #eff6ff; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* ── Tabs ───────────────────────────────────────────── */
+    .tabs {
+      display: flex;
+      gap: 0;
+      background: #fff;
+      border-bottom: 2px solid var(--border);
+      padding: 0 20px;
+    }
+
+    .tab-btn {
+      padding: 12px 20px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: .95rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: color .15s, border-color .15s;
+    }
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      font-weight: 700;
+    }
+
+    /* ── Main content ───────────────────────────────────── */
+    main { max-width: 860px; margin: 0 auto; padding: 24px 16px; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Search ─────────────────────────────────────────── */
+    .search-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .search-box input {
+      flex: 1;
+      padding: 11px 16px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .search-box input:focus { border-color: var(--primary); }
+
+    /* ── Match label ────────────────────────────────────── */
+    .match-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .85rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .match-badge {
+      background: #eff6ff;
+      color: var(--primary);
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: .8rem;
+    }
+
+    /* ── Result Cards ───────────────────────────────────── */
+    .result-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .result-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px 18px;
+      border-left: 5px solid #ccc;
+      display: grid;
+      grid-template-columns: 48px 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .rank-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .rank-1 .rank-badge { background: #fef3c7; }
+    .rank-2 .rank-badge { background: #f1f5f9; }
+    .rank-3 .rank-badge { background: #fef3c7; }
+    .rank-other .rank-badge { background: #f1f5f9; font-size: 1rem; font-weight: 700; color: var(--text-muted); }
+
+    .card-info { overflow: hidden; }
+    .card-name { font-weight: 700; font-size: 1rem; }
+    .card-issuer { font-size: .8rem; color: var(--text-muted); margin-bottom: 4px; }
+    .card-note { font-size: .82rem; color: #475569; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-conditions { font-size: .78rem; color: var(--text-muted); margin-top: 2px; }
+
+    .rate-block { text-align: right; white-space: nowrap; }
+    .rate-value { font-size: 1.6rem; font-weight: 800; color: var(--primary); }
+    .rate-unit { font-size: .75rem; color: var(--text-muted); }
+    .rate-cap { font-size: .75rem; color: #f59e0b; margin-top: 2px; }
+
+    /* ── All cards accordion ────────────────────────────── */
+    .accordion { display: flex; flex-direction: column; gap: 10px; }
+
+    .acc-item {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .acc-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      cursor: pointer;
+      user-select: none;
+      border-left: 5px solid #ccc;
+    }
+    .acc-header:hover { background: #f8fafc; }
+
+    .acc-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .acc-title { font-weight: 700; flex: 1; }
+    .acc-issuer { font-size: .8rem; color: var(--text-muted); }
+    .acc-chevron { font-size: .9rem; color: var(--text-muted); transition: transform .2s; }
+    .acc-item.open .acc-chevron { transform: rotate(180deg); }
+
+    .acc-body { display: none; padding: 0 18px 16px; }
+    .acc-item.open .acc-body { display: block; }
+
+    .acc-meta { font-size: .82rem; color: var(--text-muted); margin-bottom: 10px; }
+    .acc-meta span { margin-right: 12px; }
+
+    .rates-table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+    .rates-table th {
+      text-align: left;
+      padding: 6px 8px;
+      background: #f8fafc;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: .78rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .rates-table td { padding: 7px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .rates-table tr:last-child td { border-bottom: none; }
+    .rate-num { font-weight: 700; color: var(--primary); }
+
+    .acc-source { font-size: .75rem; color: var(--text-muted); margin-top: 10px; }
+    .acc-source a { color: var(--primary); text-decoration: none; }
+    .acc-source a:hover { text-decoration: underline; }
+
+    /* ── Empty / Loading states ─────────────────────────── */
+    .placeholder {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 48px 0;
+      font-size: .95rem;
+    }
+    .placeholder .icon { font-size: 2.5rem; margin-bottom: 10px; }
+
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid #bfdbfe;
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Source link in header ──────────────────────────── */
+    .refresh-area { display: flex; align-items: center; gap: 10px; }
+    .refresh-status { font-size: .8rem; color: var(--primary); }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1rem; }
+      .result-card { grid-template-columns: 40px 1fr auto; gap: 8px; padding: 12px; }
+      .rate-value { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>💳 信用卡優惠查詢</h1>
+  <span class="last-updated" id="lastUpdated">載入中…</span>
+  <div class="refresh-area">
+    <span class="refresh-status" id="refreshStatus"></span>
+    <button class="btn btn-outline" id="btnRefresh" onclick="triggerRefresh()">更新資料</button>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('search')">商家查詢</button>
+  <button class="tab-btn" onclick="switchTab('all')">查看所有優惠</button>
+</div>
+
+<main>
+  <!-- Tab 1: 商家查詢 -->
+  <div class="tab-panel active" id="panel-search">
+    <div class="search-box">
+      <input type="text" id="storeInput" placeholder="輸入商家名稱，例如：全聯、蝦皮、日本…" onkeydown="if(event.key==='Enter')doSearch()" />
+      <button class="btn btn-primary" onclick="doSearch()">查詢</button>
+    </div>
+
+    <div id="matchLabel" class="match-label" style="display:none"></div>
+    <div id="results" class="result-list">
+      <div class="placeholder">
+        <div class="icon">🔍</div>
+        輸入商家名稱查詢最划算的信用卡
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2: 所有優惠 -->
+  <div class="tab-panel" id="panel-all">
+    <div id="accordion" class="accordion">
+      <div class="placeholder">
+        <div class="icon">💳</div>
+        載入中…
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  let allCards = [];
+  let refreshPollTimer = null;
+  let lastKnownUpdated = '';
+
+  // ─── 初始化 ────────────────────────────────────────────────
+
+  async function init() {
+    await loadCards();
+  }
+
+  async function loadCards() {
+    try {
+      const res = await fetch('/api/cards');
+      const data = await res.json();
+      allCards = data.cards || [];
+      lastKnownUpdated = data.lastUpdated || '';
+      updateTimestamp(data.lastUpdated);
+      renderAccordion(allCards);
+    } catch (e) {
+      document.getElementById('lastUpdated').textContent = '無法連線伺服器';
+    }
+  }
+
+  function updateTimestamp(iso) {
+    if (!iso) return;
+    const d = new Date(iso);
+    const fmt = d.toLocaleString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+    document.getElementById('lastUpdated').textContent = '資料更新：' + fmt;
+  }
+
+  // ─── Tab 切換 ───────────────────────────────────────────────
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) => {
+      b.classList.toggle('active', ['search', 'all'][i] === tab);
+    });
+    document.getElementById('panel-search').classList.toggle('active', tab === 'search');
+    document.getElementById('panel-all').classList.toggle('active', tab === 'all');
+  }
+
+  // ─── 商家查詢 ────────────────────────────────────────────────
+
+  async function doSearch() {
+    const store = document.getElementById('storeInput').value.trim();
+    if (!store) return;
+
+    const resultsEl = document.getElementById('results');
+    const matchEl = document.getElementById('matchLabel');
+    resultsEl.innerHTML = '<div class="placeholder"><span class="spinner"></span>查詢中…</div>';
+    matchEl.style.display = 'none';
+
+    try {
+      const res = await fetch(`/api/query?store=${encodeURIComponent(store)}`);
+      const data = await res.json();
+
+      if (data.error) {
+        resultsEl.innerHTML = `<div class="placeholder">${data.error}</div>`;
+        return;
+      }
+
+      matchEl.style.display = 'flex';
+      matchEl.innerHTML = `
+        <span>偵測消費類別：</span>
+        <span class="match-badge">${data.matchedCategoryLabel}</span>
+        ${data.matchedKeyword ? `<span>（關鍵字：${data.matchedKeyword}）</span>` : ''}
+      `;
+
+      renderResults(data.ranked);
+    } catch (e) {
+      resultsEl.innerHTML = '<div class="placeholder">查詢失敗，請確認伺服器已啟動</div>';
+    }
+  }
+
+  function renderResults(ranked) {
+    const el = document.getElementById('results');
+    if (!ranked || ranked.length === 0) {
+      el.innerHTML = '<div class="placeholder">沒有找到結果</div>';
+      return;
+    }
+
+    const rankEmoji = ['🥇', '🥈', '🥉'];
+    el.innerHTML = ranked.map((card, i) => {
+      const rank = i < 3 ? `rank-${i + 1}` : 'rank-other';
+      const medal = i < 3 ? rankEmoji[i] : `#${i + 1}`;
+      const capText = card.cap ? `上限 ${card.cap} ${card.capUnit || ''}` : '無上限';
+      const rateDisplay = card.unit === '%'
+        ? `${card.rate}%`
+        : `${card.rate} ${card.unit}`;
+
+      return `
+        <div class="result-card ${rank}" style="border-left-color: ${card.color}">
+          <div class="rank-badge">${medal}</div>
+          <div class="card-info">
+            <div class="card-name">${card.name}</div>
+            <div class="card-issuer">${card.issuer}</div>
+            <div class="card-note">${card.note}</div>
+            ${card.cardNotes ? `<div class="card-conditions">${card.cardNotes}</div>` : ''}
+          </div>
+          <div class="rate-block">
+            <div class="rate-value">${rateDisplay}</div>
+            <div class="rate-cap">${capText}</div>
+            <a href="${card.sourceUrl}" target="_blank" style="font-size:.72rem;color:#94a3b8">官網 ↗</a>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ─── 所有優惠 Accordion ──────────────────────────────────────
+
+  function renderAccordion(cards) {
+    const el = document.getElementById('accordion');
+    if (!cards || cards.length === 0) {
+      el.innerHTML = '<div class="placeholder">沒有資料</div>';
+      return;
+    }
+
+    el.innerHTML = cards.map((card, idx) => {
+      const rows = Object.entries(card.rates)
+        .filter(([, r]) => r.unit !== 'service')
+        .map(([key, r]) => {
+          const rateDisplay = r.unit === '%'
+            ? `<span class="rate-num">${r.rate}%</span>`
+            : `<span class="rate-num">${r.rate}</span> <small>${r.unit}</small>`;
+          const capText = r.cap ? `上限 ${r.cap} ${r.capUnit || ''}` : '無上限';
+          return `
+            <tr>
+              <td>${r.note || key}</td>
+              <td>${rateDisplay}</td>
+              <td>${capText}</td>
+            </tr>
+          `;
+        }).join('');
+
+      return `
+        <div class="acc-item" id="acc-${idx}">
+          <div class="acc-header" style="border-left-color:${card.color}" onclick="toggleAcc(${idx})">
+            <div class="acc-dot" style="background:${card.color}"></div>
+            <div>
+              <div class="acc-title">${card.name}</div>
+              <div class="acc-issuer">${card.issuer}</div>
+            </div>
+            <span class="acc-chevron">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="acc-meta">
+              <span>年費：${card.annualFee}</span>
+            </div>
+            <p style="font-size:.82rem;color:#475569;margin-bottom:10px;">${card.notes}</p>
+            <table class="rates-table">
+              <thead>
+                <tr>
+                  <th>消費類別 / 通路</th>
+                  <th>回饋率</th>
+                  <th>上限</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+            <div class="acc-source">
+              官方資訊：<a href="${card.sourceUrl}" target="_blank">${card.sourceUrl}</a>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function toggleAcc(idx) {
+    const item = document.getElementById(`acc-${idx}`);
+    item.classList.toggle('open');
+  }
+
+  // ─── 更新資料 ────────────────────────────────────────────────
+
+  async function triggerRefresh() {
+    const btn = document.getElementById('btnRefresh');
+    const status = document.getElementById('refreshStatus');
+    btn.disabled = true;
+    status.innerHTML = '<span class="spinner"></span>更新中…';
+
+    try {
+      await fetch('/api/refresh', { method: 'POST' });
+      // 輪詢 lastUpdated 直到變化
+      refreshPollTimer = setInterval(async () => {
+        try {
+          const res = await fetch('/api/refresh/status');
+          const d = await res.json();
+          if (!d.isRefreshing && d.lastUpdated !== lastKnownUpdated) {
+            clearInterval(refreshPollTimer);
+            lastKnownUpdated = d.lastUpdated;
+            status.textContent = '更新完成';
+            setTimeout(() => { status.textContent = ''; }, 3000);
+            btn.disabled = false;
+            await loadCards();
+          } else if (!d.isRefreshing) {
+            // 伺服器完成但 lastUpdated 沒變（全部爬蟲失敗也算完成）
+            clearInterval(refreshPollTimer);
+            status.textContent = '更新完成（快取未變更）';
+            setTimeout(() => { status.textContent = ''; }, 3000);
+            btn.disabled = false;
+          }
+        } catch (_) {}
+      }, 3000);
+    } catch (e) {
+      status.textContent = '更新失敗';
+      btn.disabled = false;
+      setTimeout(() => { status.textContent = ''; }, 3000);
+    }
+  }
+
+  // ─── 啟動 ────────────────────────────────────────────────────
+  init();
+</script>
+</body>
+</html>
