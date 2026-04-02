@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-02T10:00:00.000Z",
+  "lastUpdated": "2026-04-02T07:45:55.662Z",
   "cards": [
     {
       "id": "taishin_richart",
@@ -60,7 +60,7 @@
           "note": "LINE Pay 消費加碼（新戶 Pay 著刷）"
         },
         "holiday": {
-          "rate": 2.0,
+          "rate": 2,
           "unit": "%",
           "cap": null,
           "capUnit": null,
@@ -113,14 +113,14 @@
           "note": "一般消費基本回饋（LINE POINTS）"
         },
         "linepay": {
-          "rate": 2.0,
+          "rate": 6,
           "unit": "%",
           "cap": 300,
           "capUnit": "points/月",
-          "note": "LINE Pay 消費（base 0.5% + bonus 1.5%）"
+          "note": "LINE Pay 消費 6% LINE POINTS"
         },
         "linepay_new": {
-          "rate": 6.0,
+          "rate": 6,
           "unit": "%",
           "cap": 300,
           "capUnit": "points/月",
@@ -187,84 +187,84 @@
       "notes": "海外 3% 無上限；偶數日指定通路加碼 5%（需單筆消費 NT$100 以上）；新戶前 6 個月額外 +4%",
       "rates": {
         "general": {
-          "rate": 1.0,
+          "rate": 1,
           "unit": "%",
           "cap": null,
           "capUnit": null,
           "note": "國內一般消費 LINE POINTS"
         },
         "overseas": {
-          "rate": 3.0,
+          "rate": 3,
           "unit": "%",
           "cap": null,
           "capUnit": null,
-          "note": "海外消費無上限 LINE POINTS"
+          "note": "海外消費 3% LINE POINTS，無上限"
         },
         "linepay": {
-          "rate": 2.0,
+          "rate": 2,
           "unit": "%",
           "cap": 200,
           "capUnit": "points/月",
           "note": "國內 LINE Pay 加碼 +1%"
         },
         "dining": {
-          "rate": 1.0,
+          "rate": 1,
           "unit": "%",
           "cap": null,
           "capUnit": null,
           "note": "餐廳一般消費（偶數日可達 6%）"
         },
         "dining_even": {
-          "rate": 6.0,
+          "rate": 6,
           "unit": "%",
           "cap": 150,
           "capUnit": "points/月",
           "note": "偶數日指定餐飲通路 +5%（舊戶），單筆 NT$100 以上"
         },
         "dining_even_new": {
-          "rate": 11.0,
+          "rate": 11,
           "unit": "%",
           "cap": 300,
           "capUnit": "points/月",
           "note": "新戶偶數日指定餐飲（1% + 5% + 4% + 1% = 11%），前 6 個月"
         },
         "general_new": {
-          "rate": 5.0,
+          "rate": 5,
           "unit": "%",
           "cap": 300,
           "capUnit": "points/月",
           "note": "新戶一般消費 +4% 加碼，前 6 個月"
         },
         "convenience": {
-          "rate": 1.0,
+          "rate": 1,
           "unit": "%",
           "cap": null,
           "capUnit": null,
           "note": "超商一般消費"
         },
         "online": {
-          "rate": 1.0,
+          "rate": 1,
           "unit": "%",
           "cap": null,
           "capUnit": null,
           "note": "網購一般消費"
         },
         "supermarket": {
-          "rate": 1.0,
+          "rate": 1,
           "unit": "%",
           "cap": null,
           "capUnit": null,
           "note": "超市量販一般消費"
         },
         "insurance": {
-          "rate": 1.0,
+          "rate": 1,
           "unit": "%",
           "cap": null,
           "capUnit": null,
           "note": "保費消費"
         },
         "fuel": {
-          "rate": 1.0,
+          "rate": 1,
           "unit": "%",
           "cap": null,
           "capUnit": null,
@@ -282,98 +282,98 @@
       "notes": "主打日本旅遊消費；日本 IC 電子錢包加值最高 10%；泰國 5%、韓國 3%；國內一般 1 點/NT$",
       "rates": {
         "general": {
-          "rate": 1.0,
+          "rate": 1,
           "unit": "LINE POINTS/NT$100",
           "cap": null,
           "capUnit": null,
           "note": "國內一般消費 1 點/NT$100"
         },
         "overseas": {
-          "rate": 6.0,
+          "rate": 6,
           "unit": "%",
           "cap": null,
           "capUnit": null,
           "note": "海外一般消費（單筆 NT$1,000 以上）"
         },
         "overseas_japan": {
-          "rate": 6.0,
+          "rate": 6,
           "unit": "%",
           "cap": null,
           "capUnit": null,
           "note": "日本當地消費（實體刷卡）"
         },
         "japan_transit": {
-          "rate": 10.0,
+          "rate": 10,
           "unit": "%",
           "cap": null,
           "capUnit": null,
-          "note": "日本 IC 電子錢包加值（Suica/PASMO/ICOCA）"
+          "note": "日本 IC 電子錢包加值 10%"
         },
         "overseas_thailand": {
-          "rate": 5.0,
+          "rate": 5,
           "unit": "%",
           "cap": null,
           "capUnit": null,
           "note": "泰國當地消費（單筆 NT$1,000 以上）"
         },
         "overseas_korea": {
-          "rate": 3.0,
+          "rate": 3,
           "unit": "%",
           "cap": null,
           "capUnit": null,
           "note": "韓國當地消費（單筆 NT$1,000 以上）"
         },
         "travel": {
-          "rate": 6.0,
+          "rate": 6,
           "unit": "%",
           "cap": null,
           "capUnit": null,
           "note": "海外旅遊消費"
         },
         "convenience": {
-          "rate": 1.0,
+          "rate": 1,
           "unit": "LINE POINTS/NT$100",
           "cap": null,
           "capUnit": null,
           "note": "超商國內消費"
         },
         "dining": {
-          "rate": 1.0,
+          "rate": 1,
           "unit": "LINE POINTS/NT$100",
           "cap": null,
           "capUnit": null,
           "note": "餐廳國內消費"
         },
         "online": {
-          "rate": 1.0,
+          "rate": 1,
           "unit": "LINE POINTS/NT$100",
           "cap": null,
           "capUnit": null,
           "note": "網購國內消費"
         },
         "supermarket": {
-          "rate": 1.0,
+          "rate": 1,
           "unit": "LINE POINTS/NT$100",
           "cap": null,
           "capUnit": null,
           "note": "超市量販國內消費"
         },
         "insurance": {
-          "rate": 1.0,
+          "rate": 1,
           "unit": "LINE POINTS/NT$100",
           "cap": null,
           "capUnit": null,
           "note": "保費消費"
         },
         "fuel": {
-          "rate": 1.0,
+          "rate": 1,
           "unit": "LINE POINTS/NT$100",
           "cap": null,
           "capUnit": null,
           "note": "加油站消費"
         },
         "department": {
-          "rate": 1.0,
+          "rate": 1,
           "unit": "LINE POINTS/NT$100",
           "cap": null,
           "capUnit": null,
