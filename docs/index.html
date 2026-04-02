@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>信用卡優惠查詢</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f4f6f9;
+      --card-bg: #ffffff;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --shadow: 0 1px 4px rgba(0,0,0,.08);
+      --radius: 12px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+    header h1 { font-size: 1.15rem; font-weight: 700; flex: 1; }
+    .data-date { font-size: .78rem; color: var(--text-muted); }
+
+    .tabs {
+      display: flex;
+      background: #fff;
+      border-bottom: 2px solid var(--border);
+      padding: 0 16px;
+    }
+    .tab-btn {
+      padding: 11px 18px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: .93rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+    }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; }
+
+    main { max-width: 860px; margin: 0 auto; padding: 20px 14px; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Search */
+    .search-box { display: flex; gap: 8px; margin-bottom: 16px; }
+    .search-box input {
+      flex: 1;
+      padding: 11px 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      font-size: 1rem;
+      outline: none;
+    }
+    .search-box input:focus { border-color: var(--primary); }
+
+    .btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: .9rem;
+      font-weight: 600;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .match-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .83rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .match-badge {
+      background: #eff6ff;
+      color: var(--primary);
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: .78rem;
+    }
+
+    /* Quick tags */
+    .quick-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .quick-tag {
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      font-size: .82rem;
+      color: var(--text-muted);
+      transition: all .15s;
+    }
+    .quick-tag:hover { border-color: var(--primary); color: var(--primary); background: #eff6ff; }
+
+    /* Result cards */
+    .result-list { display: flex; flex-direction: column; gap: 10px; }
+    .result-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px 16px;
+      border-left: 5px solid #ccc;
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+    .rank-badge {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .rank-1 .rank-badge { background: #fef3c7; }
+    .rank-2 .rank-badge { background: #f1f5f9; }
+    .rank-3 .rank-badge { background: #fef9ee; }
+    .rank-other .rank-badge { background: #f8fafc; font-size: .9rem; font-weight: 700; color: var(--text-muted); }
+
+    .card-info { overflow: hidden; }
+    .card-name { font-weight: 700; font-size: .97rem; }
+    .card-issuer { font-size: .78rem; color: var(--text-muted); }
+    .card-note { font-size: .8rem; color: #475569; margin-top: 3px; }
+    .card-cond { font-size: .76rem; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .rate-block { text-align: right; }
+    .rate-value { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+    .rate-cap { font-size: .73rem; color: #f59e0b; }
+    .rate-link { font-size: .7rem; color: #94a3b8; text-decoration: none; }
+    .rate-link:hover { text-decoration: underline; }
+
+    /* Accordion */
+    .accordion { display: flex; flex-direction: column; gap: 10px; }
+    .acc-item { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .acc-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 13px 16px; cursor: pointer;
+      border-left: 5px solid #ccc;
+    }
+    .acc-header:hover { background: #f8fafc; }
+    .acc-dot { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; }
+    .acc-title { font-weight: 700; flex: 1; }
+    .acc-sub { font-size: .78rem; color: var(--text-muted); }
+    .acc-chevron { color: var(--text-muted); font-size: .85rem; transition: transform .2s; }
+    .acc-item.open .acc-chevron { transform: rotate(180deg); }
+
+    .acc-body { display: none; padding: 0 16px 14px; }
+    .acc-item.open .acc-body { display: block; }
+    .acc-notes { font-size: .82rem; color: #475569; margin-bottom: 10px; }
+    .acc-fee { font-size: .78rem; color: var(--text-muted); margin-bottom: 8px; }
+
+    .rates-table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+    .rates-table th {
+      text-align: left; padding: 5px 8px;
+      background: #f8fafc; color: var(--text-muted);
+      font-size: .76rem; border-bottom: 1px solid var(--border);
+    }
+    .rates-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .rates-table tr:last-child td { border-bottom: none; }
+    .rate-num { font-weight: 700; color: var(--primary); }
+
+    .acc-src { font-size: .73rem; color: var(--text-muted); margin-top: 8px; }
+    .acc-src a { color: var(--primary); }
+
+    .placeholder { text-align: center; color: var(--text-muted); padding: 44px 0; }
+    .placeholder .icon { font-size: 2.2rem; margin-bottom: 8px; }
+
+    @media (max-width: 520px) {
+      .result-card { grid-template-columns: 36px 1fr auto; gap: 8px; padding: 11px 12px; }
+      .rate-value { font-size: 1.25rem; }
+      header h1 { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>💳 信用卡優惠查詢</h1>
+  <span class="data-date">資料更新：2026-04-02</span>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('search')">商家查詢</button>
+  <button class="tab-btn" onclick="switchTab('all')">查看所有優惠</button>
+</div>
+
+<main>
+  <div class="tab-panel active" id="panel-search">
+    <div class="search-box">
+      <input type="text" id="storeInput" placeholder="輸入商家名稱，例如：全聯、蝦皮、日本…"
+             onkeydown="if(event.key==='Enter')doSearch()" />
+      <button class="btn btn-primary" onclick="doSearch()">查詢</button>
+    </div>
+
+    <div class="quick-tags">
+      <span style="font-size:.8rem;color:var(--text-muted);align-self:center">常見：</span>
+      <button class="quick-tag" onclick="quickSearch('全聯')">全聯</button>
+      <button class="quick-tag" onclick="quickSearch('蝦皮')">蝦皮</button>
+      <button class="quick-tag" onclick="quickSearch('7-11')">7-11</button>
+      <button class="quick-tag" onclick="quickSearch('麥當勞')">麥當勞</button>
+      <button class="quick-tag" onclick="quickSearch('日本')">日本</button>
+      <button class="quick-tag" onclick="quickSearch('海外')">海外</button>
+      <button class="quick-tag" onclick="quickSearch('加油站')">加油站</button>
+      <button class="quick-tag" onclick="quickSearch('LINE Pay')">LINE Pay</button>
+    </div>
+
+    <div id="matchLabel" class="match-label" style="display:none"></div>
+    <div id="results" class="result-list">
+      <div class="placeholder">
+        <div class="icon">🔍</div>
+        輸入商家名稱，找出最划算的信用卡
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-all">
+    <div id="accordion" class="accordion"></div>
+  </div>
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// 卡片資料
+// ═══════════════════════════════════════════════════════════
+const CARDS = [
+  {
+    id: 'taishin_richart', name: '台新 Richart 卡', issuer: '台新銀行',
+    color: '#e60026',
+    sourceUrl: 'https://richart.tw/TSDIB_RichartWeb/card/credit-card',
+    annualFee: '首年免費，次年簽電子帳單免費',
+    notes: '每日可於 Richart Life App 切換方案，需設定台新帳戶自動扣繳',
+    rates: {
+      general:      { rate: 1.3,  unit: '%', cap: null, capUnit: null, note: '一般消費基本回饋' },
+      convenience:  { rate: 3.3,  unit: '%', cap: 300,  capUnit: 'points/月', note: '天天刷方案：超商、交通、藥妝' },
+      dining:       { rate: 3.3,  unit: '%', cap: 300,  capUnit: 'points/月', note: '好饗刷方案：餐廳、外送、娛樂' },
+      department:   { rate: 3.3,  unit: '%', cap: 300,  capUnit: 'points/月', note: '大筆刷方案：百貨、家具、3C' },
+      online:       { rate: 3.3,  unit: '%', cap: 300,  capUnit: 'points/月', note: '數趣刷方案：網購、串流' },
+      travel:       { rate: 3.3,  unit: '%', cap: 300,  capUnit: 'points/月', note: '玩旅刷方案：海外、航空、飯店' },
+      linepay:      { rate: 2.3,  unit: '%', cap: 300,  capUnit: 'points/月', note: 'LINE Pay 消費加碼（新戶 Pay 著刷）' },
+      holiday:      { rate: 2.0,  unit: '%', cap: null, capUnit: null, note: '假日刷方案：假日全類別' },
+      insurance:    { rate: 1.3,  unit: '%', cap: null, capUnit: null, note: '保費消費' },
+      overseas:     { rate: 3.3,  unit: '%', cap: 300,  capUnit: 'points/月', note: '玩旅刷方案可涵蓋海外消費' },
+      fuel:         { rate: 1.3,  unit: '%', cap: null, capUnit: null, note: '加油站一般消費' },
+      supermarket:  { rate: 1.3,  unit: '%', cap: null, capUnit: null, note: '超市量販一般消費' },
+    }
+  },
+  {
+    id: 'sinopac_daway', name: '永豐 DAWAY 卡', issuer: '永豐銀行',
+    color: '#005bac',
+    sourceUrl: 'https://bank.sinopac.com/sinopacbt/personal/credit-card/introduction/bankcard/DAWAY.html',
+    annualFee: '首年免費，次年簽電子帳單或無紙化帳單免費',
+    notes: '需綁定 LINE Pay 且設定自動扣繳方可享 LINE Pay 加碼；新戶定義：未持有永豐信用卡或已滿 6 個月以上',
+    rates: {
+      general:      { rate: 0.5,  unit: '%', cap: null, capUnit: null, note: '一般消費基本回饋（LINE POINTS）' },
+      linepay:      { rate: 2.0,  unit: '%', cap: 300,  capUnit: 'points/月', note: 'LINE Pay 消費（base 0.5% + bonus 1.5%）' },
+      linepay_new:  { rate: 6.0,  unit: '%', cap: 300,  capUnit: 'points/月', note: '新戶 LINE Pay 加碼 +4%，前 6 個月（截至 2026/6/30）' },
+      overseas:     { rate: 2.5,  unit: '%', cap: null, capUnit: null, note: '海外消費回饋' },
+      convenience:  { rate: 0.5,  unit: '%', cap: null, capUnit: null, note: '超商（以 LINE Pay 結帳可享 2%）' },
+      dining:       { rate: 0.5,  unit: '%', cap: null, capUnit: null, note: '餐廳（以 LINE Pay 結帳可享 2%）' },
+      online:       { rate: 0.5,  unit: '%', cap: null, capUnit: null, note: '網購（以 LINE Pay 結帳可享 2%）' },
+      insurance:    { rate: 0.5,  unit: '%', cap: null, capUnit: null, note: '保費消費' },
+      supermarket:  { rate: 0.5,  unit: '%', cap: null, capUnit: null, note: '超市量販消費' },
+      fuel:         { rate: 0.5,  unit: '%', cap: null, capUnit: null, note: '加油站消費' },
+    }
+  },
+  {
+    id: 'ubot_linepay', name: '聯邦 LINE PAY 卡（賴點卡）', issuer: '聯邦銀行',
+    color: '#00b900',
+    sourceUrl: 'https://activity.ubot.com.tw/2026LaiDianCard/index.htm',
+    annualFee: '首年免費，次年有條件免年費',
+    notes: '海外 3% 無上限；偶數日指定通路加碼 5%（單筆 NT$100 以上）；新戶前 6 個月額外 +4%',
+    rates: {
+      general:          { rate: 1.0,  unit: '%', cap: null, capUnit: null, note: '國內一般消費 LINE POINTS' },
+      overseas:         { rate: 3.0,  unit: '%', cap: null, capUnit: null, note: '海外消費無上限 LINE POINTS' },
+      linepay:          { rate: 2.0,  unit: '%', cap: 200,  capUnit: 'points/月', note: '國內 LINE Pay 加碼 +1%' },
+      dining:           { rate: 1.0,  unit: '%', cap: null, capUnit: null, note: '餐廳一般消費（偶數日可達 6%）' },
+      dining_even:      { rate: 6.0,  unit: '%', cap: 150,  capUnit: 'points/月', note: '偶數日指定餐飲通路 +5%（舊戶），單筆 NT$100↑' },
+      dining_even_new:  { rate: 11.0, unit: '%', cap: 300,  capUnit: 'points/月', note: '新戶偶數日指定餐飲 11%，前 6 個月' },
+      general_new:      { rate: 5.0,  unit: '%', cap: 300,  capUnit: 'points/月', note: '新戶一般消費 +4% 加碼，前 6 個月' },
+      convenience:      { rate: 1.0,  unit: '%', cap: null, capUnit: null, note: '超商消費' },
+      online:           { rate: 1.0,  unit: '%', cap: null, capUnit: null, note: '網購消費' },
+      supermarket:      { rate: 1.0,  unit: '%', cap: null, capUnit: null, note: '超市量販消費' },
+      insurance:        { rate: 1.0,  unit: '%', cap: null, capUnit: null, note: '保費消費' },
+      fuel:             { rate: 1.0,  unit: '%', cap: null, capUnit: null, note: '加油站消費' },
+    }
+  },
+  {
+    id: 'fubon_j', name: '富邦 J卡', issuer: '台北富邦銀行',
+    color: '#d4373d',
+    sourceUrl: 'https://www.fubon.com/banking/j02/',
+    annualFee: '首年免費，次年年消費 NT$60,000 或 12 筆↑、簽電子帳單等可免費',
+    notes: '主打日本旅遊；日本 IC 電子錢包加值最高 10%；泰國 5%、韓國 3%；國內一般 1 點/NT$100',
+    rates: {
+      general:           { rate: 1.0,  unit: 'LINE POINTS/NT$100', cap: null, capUnit: null, note: '國內一般消費' },
+      overseas:          { rate: 6.0,  unit: '%', cap: null, capUnit: null, note: '海外一般消費（單筆 NT$1,000↑）' },
+      overseas_japan:    { rate: 6.0,  unit: '%', cap: null, capUnit: null, note: '日本當地實體消費' },
+      japan_transit:     { rate: 10.0, unit: '%', cap: null, capUnit: null, note: '日本 IC 電子錢包加值（Suica/PASMO/ICOCA）' },
+      overseas_thailand: { rate: 5.0,  unit: '%', cap: null, capUnit: null, note: '泰國當地消費（單筆 NT$1,000↑）' },
+      overseas_korea:    { rate: 3.0,  unit: '%', cap: null, capUnit: null, note: '韓國當地消費（單筆 NT$1,000↑）' },
+      travel:            { rate: 6.0,  unit: '%', cap: null, capUnit: null, note: '海外旅遊消費' },
+      convenience:       { rate: 1.0,  unit: 'LINE POINTS/NT$100', cap: null, capUnit: null, note: '超商國內消費' },
+      dining:            { rate: 1.0,  unit: 'LINE POINTS/NT$100', cap: null, capUnit: null, note: '餐廳國內消費' },
+      online:            { rate: 1.0,  unit: 'LINE POINTS/NT$100', cap: null, capUnit: null, note: '網購國內消費' },
+      supermarket:       { rate: 1.0,  unit: 'LINE POINTS/NT$100', cap: null, capUnit: null, note: '超市量販消費' },
+      insurance:         { rate: 1.0,  unit: 'LINE POINTS/NT$100', cap: null, capUnit: null, note: '保費消費' },
+      fuel:              { rate: 1.0,  unit: 'LINE POINTS/NT$100', cap: null, capUnit: null, note: '加油站消費' },
+      department:        { rate: 1.0,  unit: 'LINE POINTS/NT$100', cap: null, capUnit: null, note: '百貨購物消費' },
+    }
+  },
+  {
+    id: 'hsbc_signature', name: '匯豐 現金御璽卡', issuer: '匯豐銀行（台灣）',
+    color: '#db0011',
+    sourceUrl: 'https://www.hsbc.com.tw/credit-cards/products/cash-back/',
+    annualFee: '首年免費，次年簽電子帳單或年消費 NT$80,000 或 12 筆↑免費',
+    notes: '無回饋上限；忠誠加碼前 3 個月 +10% 最高 NT$200/月；可 1:2 換里程',
+    rates: {
+      general:      { rate: 1.22, unit: '%', cap: null, capUnit: null, note: '國內消費現金回饋，無上限' },
+      overseas:     { rate: 2.22, unit: '%', cap: null, capUnit: null, note: '海外消費現金回饋，無上限（歐盟實體店除外）' },
+      insurance:    { rate: 1.22, unit: '%', cap: null, capUnit: null, note: '保費消費現金回饋' },
+      loyal_bonus:  { rate: 1.34, unit: '%', cap: 200,  capUnit: 'NT$/月', note: '忠誠加碼 +10%，前 3 個月，每月上限 NT$200' },
+      convenience:  { rate: 1.22, unit: '%', cap: null, capUnit: null, note: '超商消費' },
+      dining:       { rate: 1.22, unit: '%', cap: null, capUnit: null, note: '餐廳消費' },
+      online:       { rate: 1.22, unit: '%', cap: null, capUnit: null, note: '網購消費' },
+      supermarket:  { rate: 1.22, unit: '%', cap: null, capUnit: null, note: '超市量販消費' },
+      fuel:         { rate: 1.22, unit: '%', cap: null, capUnit: null, note: '加油站消費' },
+      department:   { rate: 1.22, unit: '%', cap: null, capUnit: null, note: '百貨購物消費' },
+      travel:       { rate: 2.22, unit: '%', cap: null, capUnit: null, note: '旅遊相關海外消費' },
+    }
+  },
+  {
+    id: 'yuanta_diamond', name: '元大 鑽金卡', issuer: '元大銀行',
+    color: '#c8a951',
+    sourceUrl: 'https://www.yuantabank.com.tw/bank/creditCard/creditCard/in.do?id=275bac7b2e000004dddb',
+    annualFee: '首年免費，次年簽電子帳單或設定元大帳戶自動扣繳免費',
+    notes: '無回饋上限；月消費 NT$12,888↑ 享免費停車 1 小時及道路救援；海外旅平險最高 NT$2,000 萬',
+    rates: {
+      general:     { rate: 1.2,  unit: '%', cap: null, capUnit: null, note: '國內消費鑽金回饋，無上限' },
+      overseas:    { rate: 2.2,  unit: '%', cap: null, capUnit: null, note: '海外消費鑽金回饋，無上限' },
+      convenience: { rate: 1.2,  unit: '%', cap: null, capUnit: null, note: '超商消費' },
+      dining:      { rate: 1.2,  unit: '%', cap: null, capUnit: null, note: '餐廳消費' },
+      online:      { rate: 1.2,  unit: '%', cap: null, capUnit: null, note: '網購消費' },
+      supermarket: { rate: 1.2,  unit: '%', cap: null, capUnit: null, note: '超市量販消費' },
+      fuel:        { rate: 1.2,  unit: '%', cap: null, capUnit: null, note: '加油站消費' },
+      department:  { rate: 1.2,  unit: '%', cap: null, capUnit: null, note: '百貨購物消費' },
+      insurance:   { rate: 1.2,  unit: '%', cap: null, capUnit: null, note: '保費消費' },
+      travel:      { rate: 2.2,  unit: '%', cap: null, capUnit: null, note: '旅遊相關海外消費' },
+    }
+  }
+];
+
+// ═══════════════════════════════════════════════════════════
+// 商家匹配邏輯
+// ═══════════════════════════════════════════════════════════
+const MERCHANT_MAP = {
+  '全聯':true,'全聯福利中心':'supermarket','家樂福':'supermarket','carrefour':'supermarket',
+  '大潤發':'supermarket','愛買':'supermarket','costco':'supermarket','好市多':'supermarket',
+  '頂好':'supermarket','惠康':'supermarket','wellcome':'supermarket','量販':'supermarket','超市':'supermarket',
+  '7-11':'convenience','711':'convenience','7eleven':'convenience','統一超商':'convenience',
+  '全家':'convenience','familymart':'convenience','萊爾富':'convenience','hilife':'convenience',
+  'ok超商':'convenience','超商':'convenience',
+  '麥當勞':'dining','mcdonald':'dining',"mcdonald's":'dining','肯德基':'dining','kfc':'dining',
+  '星巴克':'dining','starbucks':'dining','摩斯':'dining','mos burger':'dining',
+  '漢堡王':'dining','burger king':'dining','必勝客':'dining','pizza hut':'dining',
+  '達美樂':'dining',"domino's":'dining','王品':'dining','西堤':'dining','陶板屋':'dining',
+  '鼎泰豐':'dining','欣葉':'dining','foodpanda':'dining','ubereats':'dining','uber eats':'dining',
+  '外送':'dining','外食':'dining','餐廳':'dining','餐飲':'dining',
+  '火鍋':'dining','燒肉':'dining','壽司':'dining','拉麵':'dining','咖啡':'dining','早餐':'dining',
+  '蝦皮':'online','shopee':'online','pchome':'online','momo':'online','momoshop':'online',
+  '博客來':'online','books':'online','露天':'online','yahoo':'online','東森購物':'online',
+  'amazon':'online','rakuten':'online','樂天':'online','netflix':'online','spotify':'online',
+  '串流':'online','訂閱':'online','網購':'online','電商':'online',
+  '新光三越':'department','新光':'department','遠百':'department','遠東百貨':'department',
+  'sogo':'department','微風':'department','統一時代':'department','漢神':'department',
+  '燦坤':'department','全國電子':'department','誠品':'department','特力屋':'department',
+  '宜得利':'department','nitori':'department','百貨':'department','購物中心':'department',
+  '中油':'fuel','台灣中油':'fuel','台塑加油':'fuel','台塑石化':'fuel','全國加油':'fuel',
+  '加油站':'fuel','加油':'fuel',
+  '中華航空':'travel','華航':'travel','長榮航空':'travel','eva air':'travel','長榮':'travel',
+  '虎航':'travel','tigerair':'travel','booking':'travel','agoda':'travel','klook':'travel',
+  'kkday':'travel','飯店':'travel','訂房':'travel','民宿':'travel','旅行社':'travel','旅遊':'travel',
+  '高鐵':'travel','台鐵':'travel',
+  '保費':'insurance','保險費':'insurance','保險':'insurance',
+  'line pay':'linepay','linepay':'linepay','line支付':'linepay',
+  '日本':'overseas_japan','東京':'overseas_japan','大阪':'overseas_japan','京都':'overseas_japan',
+  '札幌':'overseas_japan','福岡':'overseas_japan','suica':'overseas_japan','pasmo':'overseas_japan',
+  'icoca':'overseas_japan','西瓜卡':'overseas_japan',
+  '泰國':'overseas_thailand','曼谷':'overseas_thailand','清邁':'overseas_thailand','普吉':'overseas_thailand',
+  '韓國':'overseas_korea','首爾':'overseas_korea','釜山':'overseas_korea',
+  '美國':'overseas','歐洲':'overseas','英國':'overseas','法國':'overseas','香港':'overseas',
+  '新加坡':'overseas','澳洲':'overseas','海外':'overseas','國外':'overseas',
+};
+// 修正全聯條目
+MERCHANT_MAP['全聯'] = 'supermarket';
+
+const CATEGORY_RATE_KEY = {
+  supermarket:       { taishin_richart:'supermarket', sinopac_daway:'supermarket', ubot_linepay:'supermarket', fubon_j:'supermarket', hsbc_signature:'supermarket', yuanta_diamond:'supermarket' },
+  convenience:       { taishin_richart:'convenience', sinopac_daway:'convenience', ubot_linepay:'convenience', fubon_j:'convenience', hsbc_signature:'convenience', yuanta_diamond:'convenience' },
+  dining:            { taishin_richart:'dining', sinopac_daway:'dining', ubot_linepay:'dining_even', fubon_j:'dining', hsbc_signature:'dining', yuanta_diamond:'dining' },
+  online:            { taishin_richart:'online', sinopac_daway:'online', ubot_linepay:'online', fubon_j:'online', hsbc_signature:'online', yuanta_diamond:'online' },
+  department:        { taishin_richart:'department', sinopac_daway:'general', ubot_linepay:'general', fubon_j:'department', hsbc_signature:'department', yuanta_diamond:'department' },
+  fuel:              { taishin_richart:'fuel', sinopac_daway:'fuel', ubot_linepay:'fuel', fubon_j:'fuel', hsbc_signature:'fuel', yuanta_diamond:'fuel' },
+  travel:            { taishin_richart:'travel', sinopac_daway:'overseas', ubot_linepay:'overseas', fubon_j:'travel', hsbc_signature:'travel', yuanta_diamond:'travel' },
+  insurance:         { taishin_richart:'insurance', sinopac_daway:'insurance', ubot_linepay:'insurance', fubon_j:'insurance', hsbc_signature:'insurance', yuanta_diamond:'insurance' },
+  linepay:           { taishin_richart:'linepay', sinopac_daway:'linepay', ubot_linepay:'linepay', fubon_j:'general', hsbc_signature:'general', yuanta_diamond:'general' },
+  overseas:          { taishin_richart:'overseas', sinopac_daway:'overseas', ubot_linepay:'overseas', fubon_j:'overseas', hsbc_signature:'overseas', yuanta_diamond:'overseas' },
+  overseas_japan:    { taishin_richart:'travel', sinopac_daway:'overseas', ubot_linepay:'overseas', fubon_j:'japan_transit', hsbc_signature:'overseas', yuanta_diamond:'overseas' },
+  overseas_thailand: { taishin_richart:'travel', sinopac_daway:'overseas', ubot_linepay:'overseas', fubon_j:'overseas_thailand', hsbc_signature:'overseas', yuanta_diamond:'overseas' },
+  overseas_korea:    { taishin_richart:'travel', sinopac_daway:'overseas', ubot_linepay:'overseas', fubon_j:'overseas_korea', hsbc_signature:'overseas', yuanta_diamond:'overseas' },
+  general:           { taishin_richart:'general', sinopac_daway:'general', ubot_linepay:'general', fubon_j:'general', hsbc_signature:'general', yuanta_diamond:'general' },
+};
+
+const CATEGORY_LABELS = {
+  supermarket:'超市 / 量販', convenience:'便利商店', dining:'餐廳 / 外食',
+  online:'網路購物', department:'百貨 / 購物', fuel:'加油站',
+  travel:'旅遊 / 航空', insurance:'保費', linepay:'LINE Pay',
+  overseas:'海外消費', overseas_japan:'海外（日本）',
+  overseas_thailand:'海外（泰國）', overseas_korea:'海外（韓國）', general:'一般消費',
+};
+
+function normalize(s) { return s.toLowerCase().replace(/[\s\-_\.,、。，]/g,''); }
+
+function detectCategory(input) {
+  const norm = normalize(input);
+  let best = { category:'general', score:0, keyword:null };
+  for (const [kw, cat] of Object.entries(MERCHANT_MAP)) {
+    const nk = normalize(kw);
+    let score = 0;
+    if (norm === nk) score = 100;
+    else if (norm.includes(nk)) score = 80;
+    else if (nk.includes(norm)) score = 60;
+    else {
+      const common = [...nk].filter(c => norm.includes(c)).length;
+      score = nk.length > 0 ? Math.floor(common/nk.length*35) : 0;
+    }
+    if (score > best.score) best = { category:cat, score, keyword:kw };
+  }
+  if (best.score < 30) return { category:'general', score:0, keyword:null };
+  return best;
+}
+
+function queryStore(storeName) {
+  const { category, score, keyword } = detectCategory(storeName);
+  const rateKeyMap = CATEGORY_RATE_KEY[category] || CATEGORY_RATE_KEY['general'];
+  const ranked = CARDS.map(card => {
+    const rk = rateKeyMap[card.id] || 'general';
+    const r = card.rates[rk] || card.rates['general'] || { rate:0, unit:'%', cap:null, capUnit:null, note:'' };
+    return { ...card, rateKey:rk, rate:r.rate||0, unit:r.unit||'%', cap:r.cap, capUnit:r.capUnit, note:r.note||'', cardNotes:card.notes };
+  });
+  ranked.sort((a,b) => b.rate!==a.rate ? b.rate-a.rate : a.id.localeCompare(b.id));
+  return { category, categoryLabel: CATEGORY_LABELS[category]||category, score, keyword, ranked };
+}
+
+// ═══════════════════════════════════════════════════════════
+// UI
+// ═══════════════════════════════════════════════════════════
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',['search','all'][i]===tab));
+  document.getElementById('panel-search').classList.toggle('active', tab==='search');
+  document.getElementById('panel-all').classList.toggle('active', tab==='all');
+  if (tab==='all' && !document.getElementById('accordion').children.length) renderAccordion();
+}
+
+function quickSearch(kw) {
+  document.getElementById('storeInput').value = kw;
+  doSearch();
+}
+
+function doSearch() {
+  const store = document.getElementById('storeInput').value.trim();
+  if (!store) return;
+  const { category, categoryLabel, keyword, ranked } = queryStore(store);
+
+  const matchEl = document.getElementById('matchLabel');
+  matchEl.style.display = 'flex';
+  matchEl.innerHTML = `<span>偵測消費類別：</span><span class="match-badge">${categoryLabel}</span>${keyword?`<span style="font-size:.78rem">（關鍵字：${keyword}）</span>`:''}`;
+
+  const medals = ['🥇','🥈','🥉'];
+  document.getElementById('results').innerHTML = ranked.map((card,i) => {
+    const rankCls = i<3 ? `rank-${i+1}` : 'rank-other';
+    const medal = i<3 ? medals[i] : `#${i+1}`;
+    const rateDisp = card.unit==='%' ? `${card.rate}%` : `${card.rate} <small style="font-size:.6em">${card.unit}</small>`;
+    const capText = card.cap ? `上限 ${card.cap} ${card.capUnit||''}` : '無上限';
+    return `
+      <div class="result-card ${rankCls}" style="border-left-color:${card.color}">
+        <div class="rank-badge">${medal}</div>
+        <div class="card-info">
+          <div class="card-name">${card.name}</div>
+          <div class="card-issuer">${card.issuer}</div>
+          <div class="card-note">${card.note}</div>
+          <div class="card-cond">${card.cardNotes}</div>
+        </div>
+        <div class="rate-block">
+          <div class="rate-value">${rateDisp}</div>
+          <div class="rate-cap">${capText}</div>
+          <a class="rate-link" href="${card.sourceUrl}" target="_blank">官網 ↗</a>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderAccordion() {
+  document.getElementById('accordion').innerHTML = CARDS.map((card,idx) => {
+    const rows = Object.entries(card.rates)
+      .filter(([,r]) => r.unit!=='service')
+      .map(([,r]) => {
+        const rDisp = r.unit==='%' ? `<span class="rate-num">${r.rate}%</span>` : `<span class="rate-num">${r.rate}</span> <small>${r.unit}</small>`;
+        const cap = r.cap ? `上限 ${r.cap} ${r.capUnit||''}` : '無上限';
+        return `<tr><td>${r.note}</td><td>${rDisp}</td><td>${cap}</td></tr>`;
+      }).join('');
+    return `
+      <div class="acc-item" id="ac${idx}">
+        <div class="acc-header" style="border-left-color:${card.color}" onclick="tog(${idx})">
+          <div class="acc-dot" style="background:${card.color}"></div>
+          <div><div class="acc-title">${card.name}</div><div class="acc-sub">${card.issuer}</div></div>
+          <span class="acc-chevron">▼</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-fee">年費：${card.annualFee}</div>
+          <div class="acc-notes">${card.notes}</div>
+          <table class="rates-table">
+            <thead><tr><th>通路 / 消費類別</th><th>回饋率</th><th>上限</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+          <div class="acc-src">官方資訊：<a href="${card.sourceUrl}" target="_blank">${card.sourceUrl}</a></div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function tog(idx) { document.getElementById(`ac${idx}`).classList.toggle('open'); }
+
+// 預先渲染 accordion
+renderAccordion();
+</script>
+</body>
+</html>
