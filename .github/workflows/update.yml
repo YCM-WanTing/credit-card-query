@@ -24,7 +24,9 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        # --omit=optional 跳過 puppeteer（含 Chromium），大幅縮短安裝時間
+        # PUPPETEER_SKIP_CHROMIUM_DOWNLOAD 跳過 Chromium 下載，大幅縮短安裝時間
+        env:
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
         run: npm ci --omit=optional
 
       - name: 執行爬蟲並重建靜態頁面
