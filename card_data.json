@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-06-01T21:39:11.384Z",
+  "lastUpdated": "2026-07-01T20:03:34.404Z",
   "cards": [
     {
       "id": "taishin_richart",
@@ -113,11 +113,11 @@
           "note": "一般消費基本回饋（LINE POINTS）"
         },
         "linepay": {
-          "rate": 6,
+          "rate": 10,
           "unit": "%",
           "cap": 300,
           "capUnit": "points/月",
-          "note": "LINE Pay 消費 6% LINE POINTS"
+          "note": "LINE Pay 消費 10% LINE POINTS"
         },
         "linepay_new": {
           "rate": 6,
